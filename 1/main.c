@@ -24,7 +24,6 @@ void	fill_arrays(int *one, int *two, char *line, int i)
 int	*bubble_sort(int *one, int length)
 {
 	int i = 0;
-printf("%i\n", length);
 	int *temp = ft_calloc(length + 1, sizeof(int));
 	if (!temp)
 		return (NULL);
@@ -32,7 +31,6 @@ printf("%i\n", length);
 	while (i < length)
 	{
 		temp[i] = one[i];
-// printf("temp[%i] = %i\n", i, temp[i]);
 		i++;
 	}
 	i = 0;
@@ -40,20 +38,15 @@ printf("%i\n", length);
 	while (i < length - 1)
 	{
 		j = 0;
-printf("temp[%i] = %i\n", i, temp[i]);
 		while(j < length - 1)
 		{
-printf("HI\n");
 			if (temp[j] > temp[j + 1])
 			{
-printf("HO\n");
-				// printf("%i--\n", temp[i]);
-				int temp1;
-				temp1 = temp[j];
+				int *temp1 = ft_calloc(1, sizeof(int));
+				*temp1 = temp[j];
 				temp[j] = temp[j + 1];
-				temp[j + i] = temp1;
-				// printf("%i--\n", temp[i]);
-printf("HA\n");
+				temp[j + 1] = *temp1;
+				free(temp1);
 			}
 			j++;
 		}
@@ -62,6 +55,34 @@ printf("HA\n");
 	return (temp);
 }
 
+int	*calculate_distances(int *one_sorted, int *two_sorted, int length)
+{
+	int *distances = ft_calloc(length, (sizeof(int)));
+	if (!distances)
+		return (NULL);
+	int i = 0;
+	while (i < length)
+	{
+		if (one_sorted[i] > two_sorted[i])
+			distances[i] = one_sorted[i] - two_sorted[i];
+		else if (one_sorted[i] < two_sorted[i])
+			distances[i] = two_sorted[i] - one_sorted[i];
+		i++;
+	}
+	return (distances);
+}
+
+int find_result(int *distances, int length)
+{
+	int i = 0;
+	int sum = 0;
+	while(i < length)
+	{
+		sum += distances[i];
+		i++;
+	}
+	return (sum);
+}
 
 int main(int argc, char **argv)
 {
@@ -107,35 +128,21 @@ int main(int argc, char **argv)
 	}
 	if (line)
 		free(line);
-	printf("\n____________________BEFORE____________________\n");
-	// print_array(one, length);
-
-// print_array(two, length);
 	int *one_sorted = bubble_sort(one, length);
 	if (!one_sorted)
 		return (1);
-	// int *two_sorted = bubble_sort(two, length);	printf("\n____________________AFTER____________________\n");
-	printf("\n____________________AFTER____________________\n");
-
-// print_array(one_sorted, length);
-// print_array(two, length);
-
-	//create distances
-	//find result
+	int *two_sorted = bubble_sort(two, length);	
+	if (!two_sorted)
+		return (free(one), free(two), free(one_sorted), 1);
+	int *distances = calculate_distances(one_sorted, two_sorted, length);
+	if (!distances)
+		return (free(one), free(two), free(one_sorted), free(two_sorted), 1);
+	int sum = find_result(distances, length);
+	printf("Sum of distances is: %i\n", sum);
 	free(one);
-	// free(one_sorted);
+	free(one_sorted);
 	free(two);
-	// free(two_sorted);
+	free(two_sorted);
+	free(distances);
 	return (0);
 }
-
-// (void)length;
-// 	printf("%i\n", one[0]);
-// 	printf("%i\n", one[1]);
-// 	printf("%i\n", one[2]);
-// 	printf("%i\n", one[3]);
-// 	printf("%i\n", one[4]);
-// 	printf("%i\n", one[5]);
-// 	printf("%i\n", one[6]);
-// 	printf("%i\n", one[7]);
-// 	printf("%i\n", one[8]);
